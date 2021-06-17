@@ -1,8 +1,9 @@
 {
     "prefix": "/",
-    "token": "ODU0NTA5NDYwOTM2MzI3MjE4.YMk98w.ECWeOdDjOjcyEDxze0XN255DmNA",
+    "token": "ODU0NTA5NDYwOTM2MzI3MjE4.YMk98w.s-ReW6UJ4Ly7nJzLREo13NcZ4VE",
     "bot_info": {
         "name": "Solaris",
-        "version": 1.0
+        "mention": "<@!854509460936327218>",
+        "version": 1.1
     }
 }
