@@ -13,6 +13,7 @@
     "discord.js": "^12.5.3",
     "eslint": "^7.28.0",
     "install": "^0.13.0",
+    "minecraft_head": "^1.0.4",
     "npm": "^7.17.0"
   }
 }

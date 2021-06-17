@@ -44,7 +44,7 @@ for (const file of commandFiles) {
 
 // Even triggers when a message is sent to the chat.
 client.on('message', async message => {
-    if (contextMatch(message.content, help) || contextMatch(message.content, how)) {
+    if ((contextMatch(message.content, help) && !message.content.startsWith(prefix)) || contextMatch(message.content, how)) {
         // Someone is asking about claiming.
         if (contextMatch(message.content, claimHelp)) {
             showEmbed(message, 'I know a tutorial that could help you out. Gimme a sec!', 'claims');
