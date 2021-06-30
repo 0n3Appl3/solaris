@@ -6,7 +6,7 @@ client.commands = new Discord.Collection();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
-const { prefix, token, bot_info } = require('./config.json');
+const { prefix, token, chatKey, bot_info } = require('./config.json');
 const fetch = require('node-fetch').default;
 
 // General keywords for queries.
@@ -30,7 +30,7 @@ const tp = ['tp'];
 // Initialise the bot.
 client.once('ready', () => {
 	console.log(bot_info.name + ' is ready!');
-    client.user.setActivity('/help', { type: 'LISTENING' });
+    client.user.setActivity('-help', { type: 'LISTENING' });
 });
 
 // Bot will now be online.
@@ -76,7 +76,7 @@ client.on('message', async message => {
     // Bot will converse with the member who pinged them.
     if (message.mentions.has(client.user) && !message.author.bot) {
         message.channel.startTyping();
-        fetch(`https://api.monkedev.com/fun/chat?msg=${message.content.replace(bot_info.mention, '')}&uid=${message.author.id}&key=qOSvE5VfX82GHIuEk5r0lAE3y`)
+        fetch(`https://api.monkedev.com/fun/chat?msg=${message.content.replace(bot_info.mention, '')}&uid=${message.author.id}&key=${chatKey}`)
         .then(response => response.json())
         .then(data => {
             // Send message to the chat.
