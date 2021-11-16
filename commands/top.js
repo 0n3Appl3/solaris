@@ -8,7 +8,7 @@ module.exports = {
         
         try {
             // Get the money.yml file from the server.
-            const fileContents = fs.readFileSync('../test-server-v3.1/plugins/EconomyControl/money.yml', 'utf8');
+            const fileContents = fs.readFileSync('../test-server-v4.0/plugins/EconomyControl/money.yml', 'utf8');
             const data = yaml.safeLoad(fileContents);
 
             // Save username and amount of credits into their own arrays.

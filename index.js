@@ -1,12 +1,14 @@
 const Discord = require('discord.js');
 const fs = require('fs');
+const mc = require('minecraft_head');
+const yaml = require('js-yaml');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
-const { prefix, token, chatKey, bot_info } = require('./config.json');
+const { prefix, token, chatKey, bot_info, market_channel } = require('./config.json');
 const fetch = require('node-fetch').default;
 
 // General keywords for queries.
@@ -27,10 +29,51 @@ const cooldownHelp = ['cooldown'];
 const teleport = ['teleport'];
 const tp = ['tp'];
 
+// Number of seconds between checking new market items.
+const shopInterval = 4;
+
 // Initialise the bot.
 client.once('ready', () => {
 	console.log(bot_info.name + ' is ready!');
     client.user.setActivity('-help', { type: 'LISTENING' });
+
+    setInterval(() => {
+        // Get the latestitem.yml file from the server.
+        const fileContents = fs.readFileSync('/Users/Jedd/Desktop/test-server-v4.0/plugins/ShopControl/latestitem.yml', 'utf8');
+        const data = yaml.safeLoad(fileContents);
+
+        try {
+            // Save item information into their own arrays.
+            const username = Object.values(data.shop).map(item => item.username);
+            const itemName = Object.values(data.shop).map(item => item.itemName);
+            const amount = Object.values(data.shop).map(item => item.amount);
+            const cost = Object.values(data.shop).map(item => item.cost);
+
+            if (username.length >= 0) {
+                // Announce every new market item listing.
+                for (let i = 0; i < username.length; i++) {
+                    mc.nameToUuid(username[i]).then((d) => {
+                        const embed = new Discord.MessageEmbed()
+                        .setColor('#db2b39')
+                        .setTitle(username[i] + " is selling a new item to the player market!")
+                        .setAuthor(username[i], 'https://crafatar.com/avatars/' + d.uuid + '.png?overlay')
+                        .addFields(
+                            { name: 'Item', value: itemName[i], inline: true },
+                            { name: 'Quantity', value: amount[i], inline: true },
+                            { name: 'Cost', value: cost[i] + ' Credits', inline: true },
+                        )
+                        .setTimestamp()
+                        .setFooter('Appl3 PvP', 'https://i.imgur.com/qBB5OW9.png');
+                        client.channels.cache.get(market_channel).send(embed);
+                    });
+                }
+                // Overwrite file to reset latest market listings.
+                // fs.writeFile('../test-server-v4.0/plugins/ShopControl/latestitem.yml', 'shop:', 'utf8');
+            }
+        } catch (err) {
+            // Do nothing.
+        }
+    }, shopInterval * 1000);
 });
 
 // Bot will now be online.
