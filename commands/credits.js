@@ -4,6 +4,7 @@ module.exports = {
     args: true,
     execute(message, args) {
         const Discord = require('discord.js');
+        const { colours } = require('../config.json');
         const mc = require('minecraft_head');
         const fs = require('fs');
         const yaml = require('js-yaml');
@@ -13,7 +14,7 @@ module.exports = {
         
         try {
             // Get the money.yml file from the server.
-            const fileContents = fs.readFileSync('../test-server-v4.0/plugins/EconomyControl/money.yml', 'utf8');
+            const fileContents = fs.readFileSync('./money.yml', 'utf8');
             const data = yaml.safeLoad(fileContents);
 
             // Save username and amount of credits into their own arrays.
@@ -33,12 +34,12 @@ module.exports = {
                     found = true;
                     mc.nameToUuid(username[i]).then((d) => {
                         const embed = new Discord.MessageEmbed()
-                        .setColor('#db2b39')
+                        .setColor(colours.default)
                         .setTitle(username[i] + "'s Bank Account")
                         .setDescription('You have ' + credits[i] + ' credits.')
                         .setThumbnail('https://crafatar.com/avatars/' + d.uuid + '.png?overlay')
                         .setFooter('Appl3 PvP', 'https://i.imgur.com/qBB5OW9.png');
-                        return message.channel.send(embed);
+                        return message.channel.send({ embeds: [embed] });
                     });
                 }
             }

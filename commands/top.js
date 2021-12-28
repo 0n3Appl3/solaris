@@ -3,12 +3,13 @@ module.exports = {
     description: 'Find out the richest players on the server.',
     execute(message) {
         const Discord = require('discord.js');
+        const { colours } = require('../config.json');
         const fs = require('fs');
         const yaml = require('js-yaml');
         
         try {
             // Get the money.yml file from the server.
-            const fileContents = fs.readFileSync('../test-server-v4.0/plugins/EconomyControl/money.yml', 'utf8');
+            const fileContents = fs.readFileSync('./money.yml', 'utf8');
             const data = yaml.safeLoad(fileContents);
 
             // Save username and amount of credits into their own arrays.
@@ -78,11 +79,11 @@ module.exports = {
 
             // Show the leaderboard as an embed.
             const embed = new Discord.MessageEmbed()
-            .setColor('#db2b39')
+            .setColor(colours.default)
             .setTitle('Credits Leaderboard')
             .setDescription(print)
             .setFooter('Appl3 PvP', 'https://i.imgur.com/qBB5OW9.png');
-            return message.channel.send(embed);
+            return message.channel.send({ embeds: [embed] });
         } catch (e) {
             console.log(e);
         }

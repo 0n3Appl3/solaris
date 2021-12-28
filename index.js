@@ -3,12 +3,12 @@ const fs = require('fs');
 const mc = require('minecraft_head');
 const yaml = require('js-yaml');
 
-const client = new Discord.Client();
+const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES", "DIRECT_MESSAGES", "DIRECT_MESSAGE_REACTIONS", "GUILD_MESSAGE_REACTIONS"], partials: ["MESSAGE", "CHANNEL", "REACTION"] });
 client.commands = new Discord.Collection();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
-const { prefix, token, chatKey, bot_info, market_channel } = require('./config.json');
+const { prefix, token, chatKey, bot_info, colours, market_channel } = require('./config.json');
 const fetch = require('node-fetch').default;
 
 // General keywords for queries.
@@ -54,9 +54,9 @@ client.once('ready', () => {
                 for (let i = 0; i < username.length; i++) {
                     mc.nameToUuid(username[i]).then((d) => {
                         const embed = new Discord.MessageEmbed()
-                        .setColor('#db2b39')
+                        .setColor(colours.default)
                         .setTitle(username[i] + " is selling a new item to the player market!")
-                        .setAuthor(username[i], 'https://crafatar.com/avatars/' + d.uuid + '.png?overlay')
+                        .setAuthor({ name: username[i], iconURL: 'https://crafatar.com/avatars/' + d.uuid + '.png?overlay' })
                         .addFields(
                             { name: 'Item', value: itemName[i], inline: true },
                             { name: 'Quantity', value: amount[i], inline: true },
@@ -64,11 +64,9 @@ client.once('ready', () => {
                         )
                         .setTimestamp()
                         .setFooter('Appl3 PvP', 'https://i.imgur.com/qBB5OW9.png');
-                        client.channels.cache.get(market_channel).send(embed);
+                        client.channels.cache.get(market_channel).send({ embeds: [embed] });
                     });
                 }
-                // Overwrite file to reset latest market listings.
-                // fs.writeFile('../test-server-v4.0/plugins/ShopControl/latestitem.yml', 'shop:', 'utf8');
             }
         } catch (err) {
             // Do nothing.
@@ -86,7 +84,7 @@ for (const file of commandFiles) {
 }
 
 // Even triggers when a message is sent to the chat.
-client.on('message', async message => {
+client.on('messageCreate', async message => {
     if ((contextMatch(message.content, help) && !message.content.startsWith(prefix)) || contextMatch(message.content, how)) {
         // Someone is asking about claiming.
         if (contextMatch(message.content, claimHelp)) {
@@ -113,7 +111,7 @@ client.on('message', async message => {
             && (contextMatch(message.content, teleport) || contextMatch(message.content, tp))) {
             showEmbed(message, 'I know this one! This tutorial will show you how to remove it.', 'remtp');
         }
-        return message.channel.stopTyping(true);
+        return;
     }
 
     // Bot will converse with the member who pinged them.
@@ -123,9 +121,9 @@ client.on('message', async message => {
         .then(response => response.json())
         .then(data => {
             // Send message to the chat.
-            message.channel.send(data.response);
+            message.channel.send({ content: data.response });
         }).catch(() => {
-            message.channel.send('Could not fetch response!');
+            message.channel.send({ content: 'Could not fetch response!' });
         });
         return message.channel.stopTyping(true);
     }
@@ -144,7 +142,7 @@ client.on('message', async message => {
         command.execute(message, args);
     } catch (error) {
         console.error(error);
-        message.reply('There was an issue executing that command!');
+        message.reply({ content: 'There was an issue executing that command!' });
     }
  });
 
@@ -165,9 +163,7 @@ client.on('message', async message => {
 
  // Executes a command and pings the member who asked for it.
  function showEmbed(message, reply, cmd) {
-    message.channel.startTyping();
-    message.reply(reply);
-    message.channel.stopTyping(true);
-    message.channel.startTyping();
+    message.reply({ content: reply });
+    message.channel.sendTyping();
     client.commands.get(cmd).execute(message);
  }

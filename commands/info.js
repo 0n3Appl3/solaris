@@ -3,8 +3,9 @@ module.exports = {
     description: 'Info command.',
     execute(message) {
         const Discord = require('discord.js');
+        const { colours } = require('../config.json');
         const embed = new Discord.MessageEmbed()
-        .setColor('#db2b39')
+        .setColor(colours.default)
         .setTitle('Server Info')
         .setDescription('We strive to provide a survival PvP experience that is as hassle-free as possible with our custom-made server plugins made with purpose and simplicity in mind.')
         .addFields(
@@ -14,6 +15,6 @@ module.exports = {
             { name: 'We will always be a free-to-play Minecraft server.', value: 'While Appl3 PvP will always remain a free-to-play server, we have some extra-special bonuses for those that donate through Tebex.', inline: false },
         )
         .setFooter('Appl3 PvP', 'https://i.imgur.com/qBB5OW9.png');
-        return message.channel.send(embed);
+        return message.channel.send({ embeds: [embed] });
     },
 };

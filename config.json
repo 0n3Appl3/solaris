@@ -1,11 +1,14 @@
 {
     "prefix": "-",
-    "token": "token",
-    "chatKey": "chatkey",
+    "token": "ODU0NTA5NDYwOTM2MzI3MjE4.YMk98w.heSPLh63ZPkbSrIQQxUAOII7Rew",
+    "chatKey": "qOSvE5VfX82GHIuEk5r0lAE3y",
     "bot_info": {
         "name": "Solaris",
         "mention": "<@!854509460936327218>",
-        "version": "1.3.1"
+        "version": "1.4.0"
     },
-    "market_channel": "marketchat"
+    "colours": {
+        "default": "#db2b39"
+    },
+    "market_channel": "471570952560574464"
 }

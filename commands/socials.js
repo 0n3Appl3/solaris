@@ -3,8 +3,9 @@ module.exports = {
     description: 'Socials command.',
     execute(message) {
         const Discord = require('discord.js');
+        const { colours } = require('../config.json');
         const embed = new Discord.MessageEmbed()
-        .setColor('#db2b39')
+        .setColor(colours.default)
         .setTitle('Social Links')
         .setDescription('Be sure to follow us on Twitter and YouTube to stay up-to-date on server posts, updates and more. The Discord server invite is also provided.')
         .addFields(
@@ -13,6 +14,6 @@ module.exports = {
             { name: 'Discord', value: 'discord.gg/xnyMD2r', inline: true },
         )
         .setFooter('Appl3 PvP', 'https://i.imgur.com/qBB5OW9.png');
-        return message.channel.send(embed);
+        return message.channel.send({ embeds: [embed] });
     },
 };
