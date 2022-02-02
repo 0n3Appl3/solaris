@@ -10,10 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^12.5.3",
+    "discord.js": "^13.4.0",
     "eslint": "^7.28.0",
     "install": "^0.13.0",
     "minecraft_head": "^1.0.4",
-    "npm": "^7.17.0"
+    "npm": "^7.17.0",
+    "twit": "^2.2.11"
   }
 }

@@ -1,7 +1,7 @@
 {
     "prefix": "-",
-    "token": "token",
-    "chatKey": "chatKey",
+    "token": "ODU0NTA5NDYwOTM2MzI3MjE4.YMk98w.0359rR-j9WiC0OomphnHwkt-xo4",
+    "chatKey": "qOSvE5VfX82GHIuEk5r0lAE3y",
     "bot_info": {
         "name": "Solaris",
         "mention": "<@!854509460936327218>",
@@ -9,6 +9,17 @@
     },
     "colours": {
         "default": "#db2b39"
+    },
+    "twitter": {
+        "user": "738236043342680065",
+        "api_key": "pjOcD0IWx2DrY4pW8JE21pnXe",
+        "api_key_secret": "s4L4UklNk2tfwjakG25hW38Jz92L1M8aI9WRixnBGEIe9Eh20h",
+        "bearer_token": "AAAAAAAAAAAAAAAAAAAAAOwXYwEAAAAAv9ZPbxm3cDjNl3z8Y%2B%2Bax1NKlzU%3DIhrLLy7Zgar2qegQ9h3tQcvXXJAJE3yoetgjGsPejr7fgpOlw3",
+        "access_token": "1047204980048838657-jPRMqNdc8zqqfSOmJlU4UxGiByaV2l",
+        "access_token_secret": "hvjBcC4QpfGV38UkFczefec12tWoAVPPliqyknVc3oNBq"
+    },
+    "chats": {
+        "twitter_channel": "twitter"
     },
     "market_channel": "471570952560574464"
 }
