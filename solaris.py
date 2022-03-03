@@ -12,7 +12,7 @@ commands = [["node", "index.js"]]
 s = sched.scheduler(time.time, time.sleep)
 
 # URL to send the webhook request.
-webhook_url = "https://maker.ifttt.com/trigger/notification/with/key/bu9m6xp0sM9R59WO-7UXKA"
+webhook_url = "https://maker.ifttt.com/trigger/notification/with/key/[key]"
 
 # Notification message constants.
 notif_title = 'Bot Operations'
