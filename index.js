@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const fs = require('fs');
 const mc = require('minecraft_head');
-const Twit = require('twit');
+const { ETwitterStreamEvent, TwitterApi } = require('twitter-api-v2');
 const yaml = require('js-yaml');
 
 const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES", "DIRECT_MESSAGES", "DIRECT_MESSAGE_REACTIONS", "GUILD_MESSAGE_REACTIONS"], partials: ["MESSAGE", "CHANNEL", "REACTION"] });
@@ -33,30 +33,44 @@ const tp = ['tp'];
 // Number of seconds between checking new market items.
 const shopInterval = 4;
 
-// Create a new instance of Twit to connect to Twitter application.
-const twit = new Twit({
-    consumer_key: twitter.api_key,
-    consumer_secret: twitter.api_key_secret,
-    access_token: twitter.access_token,
-    access_token_secret: twitter.access_token_secret,
-});
+// Create a new instance of Twitter 2.0 API to connect to Twitter application.
+const twitterClient = new TwitterApi(twitter.bearer_token);
 
 // Initialise the bot.
-client.once('ready', () => {
+client.once('ready', async () => {
 	console.log(bot_info.name + ' is ready!');
-    const stream = twit.stream('statuses/filter', { follow: [twitter.user] });
+    // const stream = twit.stream('statuses/filter', { follow: [twitter.user] });
     client.user.setActivity('-help', { type: 'LISTENING' });
 
+    const twitterAddRules = await twitterClient.v2.updateStreamRules({
+        add: [
+            {
+                value: `from:${ twitter.user }`, tag: 'From appl3pvp twitter',
+            },
+            {
+                value: `from:${ twitter.user } -is:retweet`, tag: 'From appl3pvp twitter not retweet',
+            },
+            {
+                value: `from:${ twitter.user } -is:reply`, tag: 'From appl3pvp twitter not reply',
+            },
+        ],
+    });
+    const twitterStream = await twitterClient.v2.searchStream({
+        expansions: ['author_id'],
+        'tweet.fields': ['created_at', 'text', 'attachments'],
+        'user.fields': ['name', 'username', 'profile_image_url'],
+    });
+
     // Post tweet on the Discord server chat.
-    stream.on('tweet', function(tweet) {
+    twitterStream.on(ETwitterStreamEvent.Data, async tweet => {
         const channelExists = client.channels.cache.some(c => c.name === chats.twitter_channel);
 
         // Specified channel needs to exist and is not a retweet or reply to post.
-        if (channelExists && !isReply(tweet)) {
-            const channel = client.channels.cache.find(c => c.name === chats.socials_chat_name);
+        if (channelExists) {
+            const channel = client.channels.cache.find(c => c.name === chats.twitter_channel);
             // Form the link to the tweet.
-            const link = 'https://twitter.com/' + tweet.user.screen_name + '/status/' + tweet.id_str;
-            const followLink = 'https://twitter.com/intent/follow?screen_name=' + tweet.user.screen_name;
+            const link = 'https://twitter.com/' + tweet.includes.users[0].username + '/status/' + tweet.data.id;
+            const followLink = 'https://twitter.com/intent/follow?screen_name=' + tweet.includes.users[0].username;
             
             // Create the button to able to view tweet.
             const row = new Discord.MessageActionRow()
@@ -73,21 +87,21 @@ client.once('ready', () => {
             // Create the embed for previewing the tweet.
             const embed = new Discord.MessageEmbed()
             .setColor(colours.default)
-            .setAuthor(tweet.user.name + ' (@' + tweet.user.screen_name + ')', tweet.user.profile_image_url_https, 'https://twitter.com/' + tweet.user.screen_name)
-            .setDescription(tweet.text)
+            .setAuthor(tweet.includes.users[0].name + ' (@' + tweet.includes.users[0].username + ')', tweet.includes.users[0].profile_image_url, 'https://twitter.com/' + tweet.username)
+            .setDescription(tweet.data.text)
             .setFooter('Twitter via Solaris', 'https://images-ext-1.discordapp.net/external/bXJWV2Y_F3XSra_kEqIYXAAsI3m1meckfLhYuWzxIfI/https/abs.twimg.com/icons/apple-touch-icon-192x192.png')
             .setTimestamp();
             // If tweet contains an image, attach to the embed.
-            if (tweet.entities.media != undefined) {
-                embed.setImage(tweet.entities.media[0].media_url_https);
-            }
+            // if (tweet.entities.media != undefined) {
+            //     embed.setImage(tweet.entities.media[0].media_url_https);
+            // }
             channel.send({ embeds: [embed], components: [row] });
         }
     });
 
     setInterval(() => {
         // Get the latestitem.yml file from the server.
-        const fileContents = fs.readFileSync('/Users/Jedd/Desktop/test-server-v4.0/plugins/ShopControl/latestitem.yml', 'utf8');
+        const fileContents = fs.readFileSync('/Users/Jedd_1/Desktop/test-server-v4.0/plugins/ShopControl/latestitem.yml', 'utf8');
         const data = yaml.safeLoad(fileContents);
 
         try {
@@ -106,8 +120,8 @@ client.once('ready', () => {
                         .setTitle(username[i] + " is selling a new item to the player market!")
                         .setAuthor({ name: username[i], iconURL: 'https://crafatar.com/avatars/' + d.uuid + '.png?overlay' })
                         .addFields(
-                            { name: 'Item', value: itemName[i], inline: true },
-                            { name: 'Quantity', value: amount[i], inline: true },
+                            { name: 'Item', value: itemName[i] + ' ', inline: true },
+                            { name: 'Quantity', value: amount[i] + ' ', inline: true },
                             { name: 'Cost', value: cost[i] + ' Credits', inline: true },
                         )
                         .setTimestamp()
@@ -214,13 +228,3 @@ client.on('messageCreate', async message => {
     message.channel.sendTyping();
     client.commands.get(cmd).execute(message);
  }
-
- function isReply(tweet) {
-    if (tweet.retweeted_status ||
-        tweet.in_reply_to_status_id ||
-        tweet.in_reply_to_status_id_str ||
-        tweet.in_reply_to_user_id ||
-        tweet.in_reply_to_user_id_str ||
-        tweet.in_reply_to_screen_name) return true;
-    return false;
-}
