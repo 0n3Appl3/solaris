@@ -1,25 +1,16 @@
 {
     "prefix": "-",
     "token": "token",
-    "chatKey": "key",
     "bot_info": {
         "name": "Solaris",
         "mention": "<@!854509460936327218>",
-        "version": "1.4.0"
+        "version": "1.5.0"
     },
     "colours": {
         "default": "#db2b39"
     },
-    "twitter": {
-        "user": "738236043342680065",
-        "api_key": "key",
-        "api_key_secret": "key_secret",
-        "bearer_token": "bearer",
-        "access_token": "token",
-        "access_token_secret": "token_secret"
-    },
     "chats": {
-        "twitter_channel": "twitter"
-    },
-    "market_channel": "471570952560574464"
+        "twitter_channel": "twitter",
+        "whitelist_channel": "📄｜whitelist"
+    }
 }

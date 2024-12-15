@@ -6,13 +6,13 @@ import json
 from datetime import datetime
 
 # Set the command to execute when process is offline.
-commands = [["node", "index.js"]]
+commands = [["node", "solaris.js"]]
 
 # Set up the scheduler.
 s = sched.scheduler(time.time, time.sleep)
 
 # URL to send the webhook request.
-webhook_url = "https://maker.ifttt.com/trigger/notification/with/key/[key]"
+webhook_url = "https://maker.ifttt.com/trigger/notification/with/key/bu9m6xp0sM9R59WO-7UXKA"
 
 # Notification message constants.
 notif_title = 'Bot Operations'
@@ -46,7 +46,7 @@ notif_interval = 21600
 def main(sc):
     global time_elapsed
     # Check if the process is running.
-    if (is_process_running("node index.js")):
+    if (is_process_running("node solaris.js")):
         if (time_elapsed % check_interval == 0):
             print("[" + str(datetime.utcnow()) + "] Process is still running.")
         if (time_elapsed % notif_interval == 0):
